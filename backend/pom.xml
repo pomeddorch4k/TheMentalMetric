@@ -8,8 +8,8 @@
         <version>3.5.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.mentalmetrics</groupId>
-    <artifactId>mentalmetrics-backend</artifactId>
+    <groupId>com.thementalmetric</groupId>
+    <artifactId>TheMentalMetric-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>backend</name>
     <description>The Server Implementation for MentalMetrics.com</description>
@@ -101,7 +101,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.mentalmetrics.app.MentalMetricsApplication</mainClass>
+                            <mainClass>com.thementalmetric.app.TheMentalMetricApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

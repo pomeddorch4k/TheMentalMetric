@@ -1,4 +1,4 @@
-package com.mentalmetrics.app.core.configuration;
+package com.thementalmetric.app.core.configuration;
 
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;

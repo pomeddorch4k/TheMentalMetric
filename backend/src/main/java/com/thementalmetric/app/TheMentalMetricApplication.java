@@ -1,13 +1,13 @@
-package com.mentalmetrics.app;
+package com.thementalmetric.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MentalMetricsApplication {
+public class TheMentalMetricApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MentalMetricsApplication.class, args);
+        SpringApplication.run(TheMentalMetricApplication.class, args);
     }
 
 }
