@@ -28,12 +28,12 @@ export const LightTheme = (displayType: 'desktop' | 'mobile' = 'desktop'): Theme
 export const DarkTheme = (displayType: 'desktop' | 'mobile' = 'desktop'): Theme => createTheme({
     palette : {
         primary: {
-            main: "#0070c0",
+            main: "#51a1daff",
             contrastText: "#ffffff"
         },
         secondary: {
             main: "#e2ee15",
-            contrastText: "#797979ff"
+            contrastText: "#797979"
         },
         mode: 'dark',
         background : {
@@ -43,7 +43,7 @@ export const DarkTheme = (displayType: 'desktop' | 'mobile' = 'desktop'): Theme 
         },
         text: {
             primary: "#ffffff",
-            secondary: "#858585"
+            secondary: "#d0d0d0ff"
         }
     },
     display: displayType

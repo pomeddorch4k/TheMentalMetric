@@ -8,12 +8,13 @@ import Page from "./components/Shared/Page";
 
 const AppInitializer: React.FC = () => {
     const [mode, setMode] = useState<'light' | 'dark'>('light');
-    const [displayType, setDisplayType] = useState<'desktop' | 'mobile'>('desktop');
+    const [displayType, setDisplayType] = useState<'desktop' | 'mobile'>();
 
     useEffect(() => {
         const handleResize = () => {
-            setDisplayType(window.innerWidth < 750 ? 'mobile' : 'desktop');
+            setDisplayType(window.innerWidth < window.innerHeight ? 'mobile' : 'desktop');
         }
+        handleResize();
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
