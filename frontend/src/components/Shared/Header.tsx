@@ -10,7 +10,7 @@ import type React from "react";
 
 const selectStyling = (theme: Theme) => { return {
     margin: "0px 15px 0px 15px",
-    boxShadow: `${theme.palette.text.secondary} 0px 1px 3px 0px, ${theme.palette.text.secondary} 0px 0px 0px 1px`,
+    boxShadow: `${theme.palette.text.secondary} 0px 0px 0px 1px`,
     borderColor: "text.secondary",
     height: "70%", width: "auto", aspectRatio: "1 / 1",
     borderRadius: "5px", padding: "0",
@@ -40,7 +40,7 @@ const GithubButton: React.FC = () => {
                     margin: "0px 15px 0px 15px",
                     borderRadius: "5px",
                     border: "none",
-                    boxShadow: `${theme.palette.text.secondary} 0px 1px 3px 0px, ${theme.palette.text.secondary} 0px 0px 0px 1px`,
+                    boxShadow: `${theme.palette.text.secondary} 0px 0px 0px 1px`,
                     width: "auto",
                     height: "70%",
                     padding: "10px",
