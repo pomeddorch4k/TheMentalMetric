@@ -1,8 +1,10 @@
-import Page from "../Shared/Page"
+import ContentContainer from "../Shared/ContentContainer";
 
 const HomePage: React.FC = () => {
     return (
-        <Page></Page>
+        <ContentContainer>
+            
+        </ContentContainer>
     )
 }
 

@@ -1,14 +1,9 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import HomePage from "./components/HomePage/HomePage";
+import AppInitializer from "./AppInitializer";
 
-const App: React.FC = () => {
-	return (
-		<BrowserRouter>
-            <Routes>
-                <Route index element={<HomePage/>}/>
-            </Routes>
-        </BrowserRouter>
-	)
+function App() {
+    return (
+        <AppInitializer/>
+    )
 }
 
 export default App;

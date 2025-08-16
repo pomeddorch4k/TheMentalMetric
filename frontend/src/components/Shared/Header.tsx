@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { useTheme } from "@mui/material/styles";
@@ -9,7 +10,8 @@ const Header: React.FC<{
 
     return (
         <Box width="100%" height="10%" sx={{backgroundColor: theme.palette.background.secondary}}>
-            
+            {theme.display === 'mobile' && <Typography variant="h3">MOBILE</Typography>}
+            <Button onClick={() => setMode(theme.palette.mode === 'light' ? 'dark' : 'light')}>Set Mode</Button>
         </Box>
     )
 }
