@@ -1,7 +1,20 @@
 import { Box, Button, Typography } from '@mui/material';
 import { useReducer, useState } from 'react';
 import { findGridLevelProperties, type GridLevelProperties } from '../../utils/GridRecallProperties';
-import { GridRecallReducer, inititalGridRecallState } from './GridDispatch';
+import { GridRecallReducer, inititalGridRecallState, type GridLevelStats } from './GridDispatch';
+import React from 'react';
+
+/*
+Stats to gather:
+    - time between correct guesses
+        starts after the first correct guess of round
+    - time until first correct guess (count at each level)
+    - recall speed (total time from end of time to completed level)
+    - error rate (per level: wrong / total flashed buttons)
+    - grid performance
+        * count the error rate by the exact location of the button
+        * count each time a button was chosen, and when each button was guessed
+*/
 
 enum ButtonState {
     NONE = 0,
@@ -32,12 +45,7 @@ IMPORTANT NOTE: this is just testing, the actual approach has to be cleaner
 const GameGrid: React.FC = () => {
     const [gameState, gameDispatch] = useReducer(GridRecallReducer, inititalGridRecallState);
 
-    const [currentGridSize, setCurrentGridSize] = useState<number>(3);
-    const [level, setLevel] = useState<number>(1);
-
     const [levelCompleted, setLevelCompleted] = useState<boolean>(true);
-
-    const [timeOfGuesses, setTimeOfGuesses] = useState<number[]>([]);
 
     const [correctLeft, setCorrectLeft] = useState<number>(0);
 
@@ -48,7 +56,7 @@ const GameGrid: React.FC = () => {
     function beginLevelTimer(){
         setLevelCompleted(false);
         //display the random button color changes for X amount of time
-        const properties: GridLevelProperties = findGridLevelProperties(level);
+        const properties: GridLevelProperties = findGridLevelProperties(gameState.level);
         setButtons(generateLevelButtons(properties));
         setCorrectLeft(properties.buttonFlashCount);
 
@@ -56,6 +64,7 @@ const GameGrid: React.FC = () => {
 
         const timer = setTimeout(() => {
             setTimerRunning(false);
+            gameDispatch({ type: "StartLevel" })
         }, properties.buttonFlashTime);
 
         return () => clearTimeout(timer);
@@ -78,8 +87,6 @@ const GameGrid: React.FC = () => {
             created.push({index: i, state: flashedButtons.includes(i) 
                 ? ButtonState.FLASHED : ButtonState.NONE});
         }
-        console.log(flashedButtons);
-        console.log(created);
         return created;
     }
 
@@ -94,11 +101,10 @@ const GameGrid: React.FC = () => {
 
         if(array[buttonIndex].state == ButtonState.FLASHED){
             array[buttonIndex].state = ButtonState.GUESSED_CORRECT;
-            setTimeOfGuesses([...timeOfGuesses, timestamp]);
+            gameDispatch({ type: "CorrectGuess", payload: { timestamp: timestamp, index: index }})
+
             if(correctLeft - 1 == 0){
-                const times = [...timeOfGuesses, timestamp];
-                setTimeOfGuesses([]);
-                gameDispatch({type: "NextLevel", payload: times})
+                gameDispatch({type: "IncrementLevel"})
                 setLevelCompleted(true);
                 setCorrectLeft(0);
             }else{
@@ -111,32 +117,34 @@ const GameGrid: React.FC = () => {
     }
 
     function toTimestamps(times: number[]){
-        const intitialGuess = times[0];
+        let intitialGuess = times[0];
         const durations = [];
-        for(let i = 0; i < times.length; i++){
+        for(let i = 1; i < times.length; i++){
             durations.push(times[i] - intitialGuess);
+            intitialGuess = times[i];
         }
         return durations;
     }
 
-    function toString(map: Map<number, number[]>){
-        let result: string[] = [];
-        map.forEach((values, key) => {
-            result.push(`Level ${key}: ${toTimestamps(values).join("ms, ")}ms`);
-        });
-        return result;
+    function average(times: number[]){
+        return times.reduce((acc, curr) => acc + curr, 0) / times.length;
     }
 
     if(levelCompleted){
         return (
             <>
-                <Typography variant="h3">{gameState.level}</Typography>
-                {toString(gameState.timesBetweenPresses).map((str: string) => {
+                <Typography variant="h3">Next Level: {gameState.level}</Typography>
+                <br/>
+                {Array.from(gameState.levelStats.values()).map((stats: GridLevelStats) => {
                     return (
-                        <>
-                            <Typography variant="body1">{str}</Typography>
+                        <React.Fragment key={stats.level}>
+                            <Typography variant="h5">Level {stats.level} Stats</Typography>
+                            <Typography variant="body1">Time Until First Guess: {stats.timeOfGuesses[0] - stats.startTime}ms</Typography>
+                            <Typography variant="body1">Time Between Guesses: {toTimestamps(stats.timeOfGuesses).join("ms, ")}ms</Typography>
+                            <Typography variant="body1">Avg. Guess Time: {average(toTimestamps(stats.timeOfGuesses))}ms</Typography>
+                            <Typography variant="body1">Total Time: {stats.timeOfGuesses[stats.timeOfGuesses.length - 1] - stats.startTime}ms</Typography>
                             <br/>
-                        </>
+                        </React.Fragment>
                     )
                 })}
                 <Button onClick={beginLevelTimer}>Start</Button>
@@ -145,7 +153,7 @@ const GameGrid: React.FC = () => {
     }
 
     return (
-        <Box display="grid" gridTemplateColumns={`repeat(${currentGridSize}, 1fr)`} gap={2}>
+        <Box display="grid" gridTemplateColumns={`repeat(${findGridLevelProperties(gameState.level).gridWidth}, 1fr)`} gap={2}>
                 {buttons.map((b: GridButtonState) => {
                     return (
                         <Button key={b.index} onClick={() => handleGridButtonClick(b.index)}
