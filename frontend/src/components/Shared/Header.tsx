@@ -17,7 +17,7 @@ const selectStyling = (theme: Theme) => { return {
     '& .MuiSelect-icon': {
         padding: "0", margin: "0",
         height: "50%", width: "50%", transform: "translate(-50%, -50%)",
-        transition: "none", top: "50%", left: "50%"
+        transition: "none", top: "50%", left: "50%", color: "text.primary"
     },
     '& .MuiOutlinedInput-notchedOutline': {
         border: 'none',
@@ -45,14 +45,14 @@ const GithubButton: React.FC = () => {
                     height: "70%",
                     padding: "10px",
                 }}
-            ><GitHubIcon sx={{ height: "100%", width: "auto" }} /></IconButton>
+            ><GitHubIcon sx={{ height: "100%", width: "auto", color: "text.primary" }} /></IconButton>
         </Link>
     )
 }
 
 const HeaderLink: React.FC<{item: HeaderEntry}> = ({item}) => {
     return (
-        <Button component={Link} to={item.link} sx={{textDecoration: "none", color: "primary.main"}}>
+        <Button component={Link} to={item.link} sx={{textDecoration: "none", color: "text.primary"}}>
             {item.label}
         </Button>
     )
