@@ -1,6 +1,7 @@
 import { Box, Button, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useReducer, useState } from 'react';
 import { findGridLevelProperties, type GridLevelProperties } from '../../utils/GridRecallProperties';
+import { GridRecallReducer, inititalGridRecallState } from './GridDispatch';
 
 enum ButtonState {
     NONE = 0,
@@ -29,6 +30,8 @@ function getBackgroundColor(state: ButtonState, isTimerRunning: boolean){
 IMPORTANT NOTE: this is just testing, the actual approach has to be cleaner
 */
 const GameGrid: React.FC = () => {
+    const [gameState, gameDispatch] = useReducer(GridRecallReducer, inititalGridRecallState);
+
     const [currentGridSize, setCurrentGridSize] = useState<number>(3);
     const [level, setLevel] = useState<number>(1);
 
@@ -93,7 +96,9 @@ const GameGrid: React.FC = () => {
             array[buttonIndex].state = ButtonState.GUESSED_CORRECT;
             setTimeOfGuesses([...timeOfGuesses, timestamp]);
             if(correctLeft - 1 == 0){
-                setLevel(level + 1);
+                const times = [...timeOfGuesses, timestamp];
+                setTimeOfGuesses([]);
+                gameDispatch({type: "NextLevel", payload: times})
                 setLevelCompleted(true);
                 setCorrectLeft(0);
             }else{
@@ -105,8 +110,7 @@ const GameGrid: React.FC = () => {
         setButtons(array);
     }
 
-    function toTimestamps(){
-        const times = [...timeOfGuesses];
+    function toTimestamps(times: number[]){
         const intitialGuess = times[0];
         const durations = [];
         for(let i = 0; i < times.length; i++){
@@ -115,11 +119,26 @@ const GameGrid: React.FC = () => {
         return durations;
     }
 
+    function toString(map: Map<number, number[]>){
+        let result: string[] = [];
+        map.forEach((values, key) => {
+            result.push(`Level ${key}: ${toTimestamps(values).join("ms, ")}ms`);
+        });
+        return result;
+    }
+
     if(levelCompleted){
         return (
             <>
-                <Typography variant="h3">{level}</Typography>
-                <Typography variant="body1">{toTimestamps().join("ms, ") + "ms"}</Typography>
+                <Typography variant="h3">{gameState.level}</Typography>
+                {toString(gameState.timesBetweenPresses).map((str: string) => {
+                    return (
+                        <>
+                            <Typography variant="body1">{str}</Typography>
+                            <br/>
+                        </>
+                    )
+                })}
                 <Button onClick={beginLevelTimer}>Start</Button>
             </>
         )
