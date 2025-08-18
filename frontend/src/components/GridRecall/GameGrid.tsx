@@ -34,6 +34,8 @@ const GameGrid: React.FC = () => {
 
     const [levelCompleted, setLevelCompleted] = useState<boolean>(true);
 
+    const [timeOfGuesses, setTimeOfGuesses] = useState<number[]>([]);
+
     const [correctLeft, setCorrectLeft] = useState<number>(0);
 
     const [timerRunning, setTimerRunning] = useState<boolean>(false);
@@ -79,6 +81,7 @@ const GameGrid: React.FC = () => {
     }
 
     function handleGridButtonClick(index: number){
+        const timestamp = Date.now();
         if(timerRunning) return;
         let array = [...buttons];
         const buttonIndex = array.map(b => b.index).indexOf(index);
@@ -88,6 +91,7 @@ const GameGrid: React.FC = () => {
 
         if(array[buttonIndex].state == ButtonState.FLASHED){
             array[buttonIndex].state = ButtonState.GUESSED_CORRECT;
+            setTimeOfGuesses([...timeOfGuesses, timestamp]);
             if(correctLeft - 1 == 0){
                 setLevel(level + 1);
                 setLevelCompleted(true);
@@ -101,10 +105,21 @@ const GameGrid: React.FC = () => {
         setButtons(array);
     }
 
+    function toTimestamps(){
+        const times = [...timeOfGuesses];
+        const intitialGuess = times[0];
+        const durations = [];
+        for(let i = 0; i < times.length; i++){
+            durations.push(times[i] - intitialGuess);
+        }
+        return durations;
+    }
+
     if(levelCompleted){
         return (
             <>
                 <Typography variant="h3">{level}</Typography>
+                <Typography variant="body1">{toTimestamps().join("ms, ") + "ms"}</Typography>
                 <Button onClick={beginLevelTimer}>Start</Button>
             </>
         )
